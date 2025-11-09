@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Uploaded Image</h1>
+    <h2>{{file_info.file_name}}</h2>
+    {{ file_info.file_size }} bytes<br>
+    <p>{{file_info.content_type}}</p>
+    <img src="{{ file_info.image_url }}" alt="Uploaded Image">
+</body>
+</html>
