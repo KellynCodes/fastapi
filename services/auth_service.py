@@ -1,16 +1,12 @@
 from datetime import datetime, timedelta
 from typing import Optional
-
 from fastapi import HTTPException
-from fastapi.params import Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer
 from sqlalchemy import Select
-from sqlmodel import Session
 from config.config import Config
 from jose import JWSError, jwt
 from databases.core import Record
 from sqlalchemy import Insert, Select
-from data.db import SessionLocal
 from schemas.schema import UserCreate, UserLogin
 from models.models import  Users
 from security.bcrypt import Bcrypt
@@ -44,7 +40,7 @@ class AuthService:
         user_exist_query: Select[any] = Users.select().where(Users.c.username == user.username)
         db_user: Record | None = await database.fetch_one(user_exist_query)  
         if not db_user or not Bcrypt().verify(user.password, db_user['password']):
-            raise UnauthorizedException(status_code=401, detail="Invalid credentials")
+            raise UnauthorizedException(message="Invalid credentials")
         
         access_token: str = self.create_access_token(data={"sub": user.username})
         return {"access_token": access_token, "token_type": "bearer", "user": db_user}
@@ -54,7 +50,6 @@ class AuthService:
        Create a new access token.
        """
        encode: dict = data.copy()
-       print(self.config.access_token_expires_in_minutes)
        expire = datetime.utcnow() + (expires_delta if expires_delta else timedelta(minutes=self.config.access_token_expires_in_minutes))
        encode.update({"exp": expire})
        jwt_token: str = jwt.encode(encode, self.config.secret_key, algorithm=self.config.algorithm)
