@@ -5,7 +5,7 @@ from sqlalchemy import Column, Float,Integer, MetaData, Table, String
 from data.db import metadata
 from data.db import Base
 
-users: Table = Table(
+Users: Table = Table(
     "users",
     metadata,
    Column("id", Integer, primary_key=True),
